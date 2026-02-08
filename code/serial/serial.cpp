@@ -14,7 +14,7 @@ using namespace functions;
 using json = nlohmann::json;
 
 NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE(SinkhornReturnType,
-                                   original, D1, D2, matrix, iterations, error)
+                                   original, D1, D2, matrix, iterations, error, size)
 
 void saveResultToFile(const SinkhornReturnType &result)
 {
@@ -30,16 +30,17 @@ void saveResultToFile(const SinkhornReturnType &result)
   cout << "Saved to result.json\n";
 }
 
-int main()
+int main(int argc, char *argv[])
 {
-  system("chcp 65001");
-  IntMatrix matrix = getRand(500, 1, 1000);
-  cout << "Solving...\n";
+  // system("chcp 65001");
+  int size = argc > 1 ? stoi(argv[1]) : 500;
+  IntMatrix matrix = getRand(size, 1, 100);
+  cout << "Solving a square matrix of size " << size << "...\n";
   auto start = chrono::steady_clock::now();
   SinkhornReturnType result = sinkhorn_basic(toDouble(matrix), 1e-10, 10000);
   auto end = chrono::steady_clock::now();
   auto duration = chrono::duration_cast<chrono::milliseconds>(end - start);
   cout << "Time taken: " << duration.count() << " milliseconds\n";
-  // saveResultToFile(result);
+  saveResultToFile(result);
   return 0;
 }
