@@ -107,6 +107,36 @@ namespace openmp_functions
         return C;
     }
 
+    DMatrix matrixNormalizeOpenmp(DMatrix matrix, vector<double> v, int axis)
+    {
+        int n = matrix.size();
+        DMatrix C(n, vector<double>(n, 0.0));
+        if (axis == 0)
+        { // Normalize along columns
+#pragma omp parallel for
+            for (int i = 0; i < n; i++)
+            {
+                for (int j = 0; j < n; j++)
+                {
+                    C[i][j] = matrix[i][j] / v[j];
+                }
+            }
+        }
+        else if (axis == 1)
+        { // Normalize along rows
+#pragma omp parallel for
+            for (int i = 0; i < n; i++)
+            {
+                double v_i = v[i];
+                for (int j = 0; j < n; j++)
+                {
+                    C[i][j] = matrix[i][j] / v_i;
+                }
+            }
+        }
+        return C;
+    }
+
     double getError(DMatrix matrix, int axis)
     // Computes the maximum deviation from 1.0 of the sums along the specified axis
     {
@@ -119,7 +149,7 @@ namespace openmp_functions
         return error;
     }
 
-    SinkhornReturnType sinkhorn_openmp(DMatrix originalMatrix, double tolerance = 1e-3, int maxIterations = 1000)
+    SinkhornReturnType sinkhorn_openmp(DMatrix originalMatrix, double tolerance = 1e-3, int maxIterations = 1000, bool slowVersion = true)
     // Performs the Sinkhorn algorithm to balance the matrix using openmp parallelization
     {
         DMatrix matrix = originalMatrix;
@@ -132,10 +162,24 @@ namespace openmp_functions
         {
             vector<double> rowSum = sumAlongOpenmp(matrix, 1);
             D1 = vectorMultiply(D1, rowSum);
-            matrix = matrixMultiplyOpenmp(diagonal(reciprocal(rowSum)), matrix);
+            if (slowVersion)
+            {
+                matrix = matrixMultiplyOpenmp(diagonal(reciprocal(rowSum)), matrix);
+            }
+            else
+            {
+                matrix = matrixNormalizeOpenmp(matrix, rowSum, 1);
+            }
             vector<double> columnSum = sumAlongOpenmp(matrix, 0);
             D2 = vectorMultiply(columnSum, D2);
-            matrix = matrixMultiplyOpenmp(matrix, diagonal(reciprocal(columnSum)));
+            if (slowVersion)
+            {
+                matrix = matrixMultiplyOpenmp(matrix, diagonal(reciprocal(columnSum)));
+            }
+            else
+            {
+                matrix = matrixNormalizeOpenmp(matrix, columnSum, 0);
+            }
             double row_error = getError(matrix, 1);
             double column_error = getError(matrix, 0);
             error = max(row_error, column_error);

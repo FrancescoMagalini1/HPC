@@ -34,6 +34,7 @@ int main(int argc, char *argv[])
 {
   // system("chcp 65001");
   int size = argc > 1 ? stoi(argv[1]) : 500;
+  bool saveFile = argc > 2 ? stoi(argv[2]) : 0;
   IntMatrix matrix = getRand(size, 1, 100);
   cout << "Solving a square matrix of size " << size << "...\n";
   auto start = chrono::steady_clock::now();
@@ -41,6 +42,9 @@ int main(int argc, char *argv[])
   auto end = chrono::steady_clock::now();
   auto duration = chrono::duration_cast<chrono::milliseconds>(end - start);
   cout << "Time taken: " << duration.count() << " milliseconds\n";
-  saveResultToFile(result);
+  if (saveFile)
+  {
+    saveResultToFile(result);
+  }
   return 0;
 }
