@@ -157,7 +157,7 @@ namespace openmp_functions
         vector<double> D1(n, 1.0);
         vector<double> D2(n, 1.0);
         int iter = 0;
-        double error = +INFINITY;
+        double error = 1000;
         while ((error > tolerance) && (iter < maxIterations))
         {
             vector<double> rowSum = sumAlongOpenmp(matrix, 1);

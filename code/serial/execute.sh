@@ -1,5 +1,5 @@
 #!/bin/bash
-#PBS -l select=1:ncpus=1:mem=2gb -l place=pack:excl
+#PBS -l select=1:ncpus=1:mem=2gb
 # set max execution time
 #PBS -l walltime=00:03:00
 # imposta la coda di esecuzione

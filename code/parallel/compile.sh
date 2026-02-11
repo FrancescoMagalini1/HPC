@@ -1,0 +1,1 @@
+g++ parallel.cpp -g -fopenmp -o "./executables/linux/parallel"
