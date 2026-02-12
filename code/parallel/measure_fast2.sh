@@ -1,0 +1,9 @@
+qsub -o ~/HPC/code/parallel/logs/fast/n2 -e ~/HPC/code/parallel/logs/fast/n2 -v ARG1=5000,ARG2=2,ARG3=0 execute.sh
+qsub -o ~/HPC/code/parallel/logs/fast/n2 -e ~/HPC/code/parallel/logs/fast/n2 -v ARG1=5000,ARG2=2,ARG3=0 execute.sh
+qsub -o ~/HPC/code/parallel/logs/fast/n2 -e ~/HPC/code/parallel/logs/fast/n2 -v ARG1=7500,ARG2=2,ARG3=0 execute.sh
+qsub -o ~/HPC/code/parallel/logs/fast/n2 -e ~/HPC/code/parallel/logs/fast/n2 -v ARG1=7500,ARG2=2,ARG3=0 execute.sh
+qsub -o ~/HPC/code/parallel/logs/fast/n2 -e ~/HPC/code/parallel/logs/fast/n2 -v ARG1=7500,ARG2=2,ARG3=0 execute.sh
+qsub -o ~/HPC/code/parallel/logs/fast/n2 -e ~/HPC/code/parallel/logs/fast/n2 -v ARG1=7500,ARG2=2,ARG3=0 execute.sh
+qsub -o ~/HPC/code/parallel/logs/fast/n2 -e ~/HPC/code/parallel/logs/fast/n2 -v ARG1=10000,ARG2=2,ARG3=0 execute.sh
+qsub -o ~/HPC/code/parallel/logs/fast/n2 -e ~/HPC/code/parallel/logs/fast/n2 -v ARG1=10000,ARG2=2,ARG3=0 execute.sh
+qsub -o ~/HPC/code/parallel/logs/fast/n2 -e ~/HPC/code/parallel/logs/fast/n2 -v ARG1=10000,ARG2=2,ARG3=0 execute.sh
