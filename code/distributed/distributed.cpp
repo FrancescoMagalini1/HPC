@@ -21,6 +21,7 @@ int main(int argc, char *argv[])
     int matrixSize = argc > 1 ? stoi(argv[1]) : 100;
     int threads = argc > 2 ? stoi(argv[2]) : 4;
     int maxIterations = argc > 3 ? stoi(argv[3]) : 1;
+    bool saveFile = argc > 4 ? stoi(argv[4]) : 0;
     omp_set_num_threads(threads);
     MPI_Init(NULL, NULL);
     MPI_Barrier(MPI_COMM_WORLD);
@@ -129,20 +130,31 @@ int main(int argc, char *argv[])
     {
         globalD2 = localD2; // All processes have the same D2
         // write to json globald1, globald2, initial matrix, final matrix
-        json j;
-        j["D1"] = globalD1;
-        j["D2"] = globalD2;
-        j["initialMatrix"] = initialMatrix;
-        j["finalMatrix"] = flatBuffer;
-        ofstream file("HPC/code/distributed/result.json");
-        if (!file.is_open())
+        if (saveFile)
         {
-            cerr << "Cannot open file for writing\n";
-            return 1;
+            DMatrix finalMatrix(matrixSize, vector<double>(matrixSize));
+            for (int i = 0; i < matrixSize; i++)
+            {
+                for (int j = 0; j < matrixSize; j++)
+                {
+                    finalMatrix[i][j] = flatBuffer[i * matrixSize + j];
+                }
+            }
+            json j;
+            j["D1"] = globalD1;
+            j["D2"] = globalD2;
+            j["initialMatrix"] = initialMatrix;
+            j["finalMatrix"] = finalMatrix;
+            ofstream file("HPC/code/distributed/result.json");
+            if (!file.is_open())
+            {
+                cerr << "Cannot open file for writing\n";
+                return 1;
+            }
+            file << j.dump(4) << endl;
+            file.close();
+            cout << "Saved to result.json\n";
         }
-        file << j.dump(4) << endl;
-        file.close();
-        cout << "Saved to result.json\n";
     }
     // Finalize the MPI environment. No more MPI calls can be made after this
     MPI_Barrier(MPI_COMM_WORLD);
