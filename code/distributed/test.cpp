@@ -1,28 +1,83 @@
 #include <mpi.h>
 #include <stdio.h>
 #include <iostream>
+#include "../libraries/utils.h"
+#include <stdlib.h>
+#include <vector>
+#include <string>
 
 using namespace std;
+using namespace utils;
+using DVector = vector<double>;
 
-int main()
+int main(int argc, char *argv[])
 {
+    int matrixSize = argc > 1 ? stoi(argv[1]) : 100;
     MPI_Init(NULL, NULL);
     MPI_Barrier(MPI_COMM_WORLD);
-    double start = MPI_Wtime();
+    double startTime = MPI_Wtime();
     // Get the number of processes
-    int world_size;
-    MPI_Comm_size(MPI_COMM_WORLD, &world_size);
+    int nProcesses;
+    MPI_Comm_size(MPI_COMM_WORLD, &nProcesses);
     // Get the rank of the process
-    int world_rank;
-    MPI_Comm_rank(MPI_COMM_WORLD, &world_rank);
-    // Print off a hello world message
-    cout << "Hello world from process rank " << world_rank << " out of " << world_size << " processors\n";
+    int processRank;
+    MPI_Comm_rank(MPI_COMM_WORLD, &processRank);
+    if (matrixSize % nProcesses != 0)
+    {
+        if (processRank == 0)
+        {
+            cerr << "Error: Matrix size n = " << matrixSize
+                 << " is not divisible by number of processes p = "
+                 << nProcesses << endl;
+        }
+        MPI_Abort(MPI_COMM_WORLD, EXIT_FAILURE);
+        return EXIT_FAILURE; // (not strictly necessary after MPI_Abort)
+    }
+    int rowsPerProcess = matrixSize / nProcesses;
+    DVector flatBuffer; // only meaningful on root
+    DVector localBuffer(rowsPerProcess * matrixSize);
+    if (processRank == 0)
+    {
+        cout << "Matrix size: " << matrixSize << "x" << matrixSize
+             << ", Number of processes: " << nProcesses << endl;
+
+        DMatrix matrix = toDouble(getRand(matrixSize, 1, 100));
+        flatBuffer.resize(matrixSize * matrixSize);
+        for (int i = 0; i < matrixSize; i++)
+        {
+            for (int j = 0; j < matrixSize; j++)
+            {
+                flatBuffer[i * matrixSize + j] = matrix[i][j];
+            }
+        }
+    }
+
+    MPI_Scatter(
+        flatBuffer.data(),           // send buffer (root only)
+        rowsPerProcess * matrixSize, // elements per process
+        MPI_DOUBLE,
+        localBuffer.data(), // receive buffer
+        rowsPerProcess * matrixSize,
+        MPI_DOUBLE,
+        0,
+        MPI_COMM_WORLD);
+
     // Finalize the MPI environment. No more MPI calls can be made after this
     MPI_Barrier(MPI_COMM_WORLD);
-    double end = MPI_Wtime();
-    if (world_rank == 0)
+    double endTime = MPI_Wtime();
+    if (processRank == 0)
     {
-        cout << "Execution time: " << end - start << " seconds\n";
+        cout << "Execution time: " << endTime - startTime << " seconds\n";
+    }
+
+    cout << "Rank " << processRank << " received:\n";
+    for (int i = 0; i < rowsPerProcess; i++)
+    {
+        for (int j = 0; j < matrixSize; j++)
+        {
+            cout << localBuffer[i * matrixSize + j] << " ";
+        }
+        cout << "\n";
     }
 
     MPI_Finalize();
