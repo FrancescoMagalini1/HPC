@@ -1,1 +1,1 @@
-mpic++ -g -Wall -o ./executables/test test.cpp
+mpic++ -g -Wall -o ./executables/test test.cpp -fopenmp

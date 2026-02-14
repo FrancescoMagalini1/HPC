@@ -9,7 +9,6 @@ namespace distributed_functions
 {
     DVector sumAlongDistributed(DVector flatBuffer, int n, int m, int axis)
     {
-        int s = flatBuffer.size();
         DVector sums;
         if (axis == 0)
         { // Sum along columns

@@ -16,7 +16,8 @@ using DVector = vector<double>;
 int main(int argc, char *argv[])
 {
     int matrixSize = argc > 1 ? stoi(argv[1]) : 100;
-    omp_set_num_threads(4);
+    int threads = argc > 2 ? stoi(argv[2]) : 4;
+    omp_set_num_threads(threads);
     MPI_Init(NULL, NULL);
     MPI_Barrier(MPI_COMM_WORLD);
     double startTime = MPI_Wtime();
