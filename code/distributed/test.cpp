@@ -92,6 +92,8 @@ int main(int argc, char *argv[])
             for (int i = 0; i < localBuffer.size(); i++)
             {
                 cout << localBuffer[i] << " ";
+                if (i % matrixSize == matrixSize - 1)
+                    cout << endl; // separate rows
             }
             cout << endl;
         }
