@@ -17,6 +17,7 @@ int main(int argc, char *argv[])
 {
     int matrixSize = argc > 1 ? stoi(argv[1]) : 100;
     int threads = argc > 2 ? stoi(argv[2]) : 4;
+    int maxIterations = argc > 3 ? stoi(argv[3]) : 1;
     omp_set_num_threads(threads);
     MPI_Init(NULL, NULL);
     MPI_Barrier(MPI_COMM_WORLD);
@@ -44,7 +45,7 @@ int main(int argc, char *argv[])
     if (processRank == 0)
     {
         cout << "Matrix size: " << matrixSize << "x" << matrixSize
-             << ", Number of processes: " << nProcesses << endl;
+             << ", Number of processes: " << nProcesses << ", Number of iterations: " << maxIterations << endl;
 
         DMatrix matrix = toDouble(getRand(matrixSize, 1, 100));
         flatBuffer.resize(matrixSize * matrixSize);
@@ -67,15 +68,33 @@ int main(int argc, char *argv[])
         0,
         MPI_COMM_WORLD);
 
-    for (int iter = 0; iter < 1; iter++)
+    DVector localD1(rowsPerProcess, 1.0);
+    DVector localD2(matrixSize, 1.0);
+    for (int iter = 0; iter < maxIterations; iter++)
     {
         DVector localSums = sumAlongDistributed(localBuffer, rowsPerProcess, matrixSize, 1);
-        cout << "Process " << processRank << " computed local sums for iteration " << iter << ": ";
-        for (double sum : localSums)
+        localD1 = vectorMultiply(localD1, localSums);
+        localBuffer = normalizeDistributed(localBuffer, localSums, rowsPerProcess, matrixSize, 1);
+        // printing localD1 for debugging
+        if (processRank == 0)
         {
-            cout << sum << " ";
+            cout << "localD1: ";
+            for (int i = 0; i < localD1.size(); i++)
+            {
+                cout << localD1[i] << " ";
+            }
+            cout << endl;
         }
-        cout << endl;
+        // printing localBuffer for debugging
+        if (processRank == 0)
+        {
+            cout << "localBuffer: ";
+            for (int i = 0; i < localBuffer.size(); i++)
+            {
+                cout << localBuffer[i] << " ";
+            }
+            cout << endl;
+        }
     }
 
     // Finalize the MPI environment. No more MPI calls can be made after this

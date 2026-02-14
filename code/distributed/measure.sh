@@ -1,1 +1,1 @@
-qsub -o ~/HPC/code/distributed/logs -e ~/HPC/code/distributed/logs -v ARG1=200,ARG2=4 execute.sh
+qsub -o ~/HPC/code/distributed/logs -e ~/HPC/code/distributed/logs -v ARG1=50,ARG2=4,ARG3=1 execute.sh
