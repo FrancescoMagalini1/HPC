@@ -6,4 +6,4 @@
 # imposta la coda di esecuzione
 #PBS -q shortCPUQ
 module load OpenMPI/4.1.6-GCC-13.2.0
-mpirun -n 3 ./HPC/code/distributed/executables/test
+mpirun -n 2 ./HPC/code/distributed/executables/test

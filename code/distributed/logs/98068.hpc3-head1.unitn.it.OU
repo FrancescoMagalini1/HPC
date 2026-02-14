@@ -1,6 +1,0 @@
-Hello world from process rank 2 out of 5 processors
-Hello world from process rank 3 out of 5 processors
-Hello world from process rank 4 out of 5 processors
-Hello world from process rank 0 out of 5 processors
-Execution time: 6.6263e-05 seconds
-Hello world from process rank 1 out of 5 processors
