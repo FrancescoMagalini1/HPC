@@ -2,17 +2,21 @@
 #include <stdio.h>
 #include <iostream>
 #include "../libraries/utils.h"
+#include "../libraries/distributed_functions.h"
 #include <stdlib.h>
 #include <vector>
 #include <string>
+#include <omp.h>
 
 using namespace std;
 using namespace utils;
+using namespace distributed_functions;
 using DVector = vector<double>;
 
 int main(int argc, char *argv[])
 {
     int matrixSize = argc > 1 ? stoi(argv[1]) : 100;
+    omp_set_num_threads(4);
     MPI_Init(NULL, NULL);
     MPI_Barrier(MPI_COMM_WORLD);
     double startTime = MPI_Wtime();
@@ -62,22 +66,23 @@ int main(int argc, char *argv[])
         0,
         MPI_COMM_WORLD);
 
+    for (int iter = 0; iter < 1; iter++)
+    {
+        DVector localSums = sumAlongDistributed(localBuffer, rowsPerProcess, matrixSize, 1);
+        cout << "Process " << processRank << " computed local sums for iteration " << iter << ": ";
+        for (double sum : localSums)
+        {
+            cout << sum << " ";
+        }
+        cout << endl;
+    }
+
     // Finalize the MPI environment. No more MPI calls can be made after this
     MPI_Barrier(MPI_COMM_WORLD);
     double endTime = MPI_Wtime();
     if (processRank == 0)
     {
         cout << "Execution time: " << endTime - startTime << " seconds\n";
-    }
-
-    cout << "Rank " << processRank << " received:\n";
-    for (int i = 0; i < rowsPerProcess; i++)
-    {
-        for (int j = 0; j < matrixSize; j++)
-        {
-            cout << localBuffer[i * matrixSize + j] << " ";
-        }
-        cout << "\n";
     }
 
     MPI_Finalize();
