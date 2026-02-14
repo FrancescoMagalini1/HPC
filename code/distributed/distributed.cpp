@@ -7,6 +7,7 @@
 #include <vector>
 #include <string>
 #include <omp.h>
+#include <fstream>
 #include "../libraries/json.hpp"
 
 using namespace std;
@@ -133,11 +134,11 @@ int main(int argc, char *argv[])
         j["D2"] = globalD2;
         j["initialMatrix"] = initialMatrix;
         j["finalMatrix"] = flatBuffer;
-        ofstream file("result.json");
+        ofstream file("HPC/code/distributed/result.json");
         if (!file.is_open())
         {
             cerr << "Cannot open file for writing\n";
-            return;
+            return 1;
         }
         file << j.dump(4) << endl;
         file.close();
