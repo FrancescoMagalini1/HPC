@@ -1,1 +1,1 @@
-mpic++ -g -Wall -o ./executables/test test.cpp -fopenmp
+mpic++ -g -Wall -o ./executables/distributed distributed.cpp -fopenmp

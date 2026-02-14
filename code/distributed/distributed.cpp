@@ -7,11 +7,13 @@
 #include <vector>
 #include <string>
 #include <omp.h>
+#include "../libraries/json.hpp"
 
 using namespace std;
 using namespace utils;
 using namespace distributed_functions;
 using DVector = vector<double>;
+using json = nlohmann::json;
 
 int main(int argc, char *argv[])
 {
@@ -42,12 +44,14 @@ int main(int argc, char *argv[])
     int rowsPerProcess = matrixSize / nProcesses;
     DVector flatBuffer; // only meaningful on root
     DVector localBuffer(rowsPerProcess * matrixSize);
+    DMatrix initialMatrix; // only meaningful on root
     if (processRank == 0)
     {
         cout << "Matrix size: " << matrixSize << "x" << matrixSize
              << ", Number of processes: " << nProcesses << ", Number of iterations: " << maxIterations << endl;
 
         DMatrix matrix = toDouble(getRand(matrixSize, 1, 100));
+        initialMatrix = matrix;
         flatBuffer.resize(matrixSize * matrixSize);
         for (int i = 0; i < matrixSize; i++)
         {
@@ -72,33 +76,73 @@ int main(int argc, char *argv[])
     DVector localD2(matrixSize, 1.0);
     for (int iter = 0; iter < maxIterations; iter++)
     {
-        DVector localSums = sumAlongDistributed(localBuffer, rowsPerProcess, matrixSize, 1);
-        localD1 = vectorMultiply(localD1, localSums);
-        localBuffer = normalizeDistributed(localBuffer, localSums, rowsPerProcess, matrixSize, 1);
-        // printing localD1 for debugging
-        if (processRank == 0)
-        {
-            cout << "localD1: ";
-            for (int i = 0; i < rowsPerProcess; i++)
-            {
-                cout << localD1[i] << " ";
-            }
-            cout << endl;
-        }
-        // printing localBuffer for debugging
-        if (processRank == 0)
-        {
-            cout << "localBuffer: ";
-            for (int i = 0; i < rowsPerProcess * matrixSize; i++)
-            {
-                cout << localBuffer[i] << " ";
-                if (i % matrixSize == matrixSize - 1)
-                    cout << endl; // separate rows
-            }
-            cout << endl;
-        }
+        DVector localRowSums = sumAlongDistributed(localBuffer, rowsPerProcess, matrixSize, 1);
+        localD1 = vectorMultiply(localD1, localRowSums);
+        localBuffer = normalizeDistributed(localBuffer, localRowSums, rowsPerProcess, matrixSize, 1);
+        DVector localColSums = sumAlongDistributed(localBuffer, rowsPerProcess, matrixSize, 0);
+        DVector globalColSums(matrixSize, 0.0);
+        MPI_Allreduce(
+            localColSums.data(),  // send buffer
+            globalColSums.data(), // receive buffer
+            matrixSize,           // number of elements
+            MPI_DOUBLE,
+            MPI_SUM, // reduction operation
+            MPI_COMM_WORLD);
+
+        localD2 = vectorMultiply(localD2, globalColSums);
+        localBuffer = normalizeDistributed(localBuffer, globalColSums, rowsPerProcess, matrixSize, 0);
+    }
+    // Gather the normalized submatrices back to the root process
+    MPI_Gather(
+        localBuffer.data(),          // send buffer
+        rowsPerProcess * matrixSize, // elements to send
+        MPI_DOUBLE,
+        flatBuffer.data(),           // receive buffer (root only)
+        rowsPerProcess * matrixSize, // elements to receive per process
+        MPI_DOUBLE,
+        0, // root process
+        MPI_COMM_WORLD);
+    // Gather the localD1 and localD2 vectors back to the root process
+    DVector globalD1;
+    DVector globalD2;
+
+    if (processRank == 0)
+    {
+        globalD1.resize(matrixSize);
+        globalD2.resize(matrixSize);
     }
 
+    MPI_Gather(
+        localD1.data(), // send buffer
+        rowsPerProcess, // elements to send
+        MPI_DOUBLE,
+        globalD1.data(), // receive buffer (root only)
+        rowsPerProcess,  // elements to receive per process
+        MPI_DOUBLE,
+        0, // root process
+        MPI_COMM_WORLD);
+
+    // Since all processes have the same localD2, we can just copy it on root
+    // Or gather and verify consistency
+    if (processRank == 0)
+    {
+        globalD2 = localD2; // All processes have the same D2
+        // write to json globald1, globald2, initial matrix, final matrix
+        json j;
+        j["D1"] = globalD1;
+        j["D2"] = globalD2;
+        j["initialMatrix"] = initialMatrix;
+        j["finalMatrix"] = flatBuffer;
+        ofstream file("result.json");
+        if (!file.is_open())
+        {
+            cerr << "Cannot open file for writing\n";
+            return;
+        }
+        file << j.dump(4) << endl;
+        file.close();
+        cout << "Saved to result.json\n";
+    }
     // Finalize the MPI environment. No more MPI calls can be made after this
     MPI_Barrier(MPI_COMM_WORLD);
     double endTime = MPI_Wtime();
