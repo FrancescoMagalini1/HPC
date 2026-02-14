@@ -1,0 +1,1 @@
+mpic++ -g -Wall -o ./executables/test test.cpp

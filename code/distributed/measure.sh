@@ -1,0 +1,1 @@
+qsub -o ~/HPC/code/distributed/logs -e ~/HPC/code/distributed/logs execute.sh
