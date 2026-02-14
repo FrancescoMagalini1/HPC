@@ -79,7 +79,7 @@ int main(int argc, char *argv[])
         if (processRank == 0)
         {
             cout << "localD1: ";
-            for (int i = 0; i < localD1.size(); i++)
+            for (int i = 0; i < rowsPerProcess; i++)
             {
                 cout << localD1[i] << " ";
             }
@@ -89,7 +89,7 @@ int main(int argc, char *argv[])
         if (processRank == 0)
         {
             cout << "localBuffer: ";
-            for (int i = 0; i < localBuffer.size(); i++)
+            for (int i = 0; i < rowsPerProcess * matrixSize; i++)
             {
                 cout << localBuffer[i] << " ";
                 if (i % matrixSize == matrixSize - 1)
