@@ -62,13 +62,11 @@ namespace distributed_functions
     {
         DVector result(n * m, 0.0);
         if (axis == 0)
-        {
+        { // Normalize along colums
 #pragma omp parallel for
             for (int j = 0; j < m; j++)
             {
                 double col_sum = sums[j];
-
-                // Divide all elements in this column by the column sum
                 for (int i = 0; i < n; i++)
                 {
                     result[i * m + j] = flatBuffer[i * m + j] / col_sum;
@@ -76,12 +74,12 @@ namespace distributed_functions
             }
         }
         else if (axis == 1)
-        {
+        { // Normalize along rows
 #pragma omp parallel for
             for (int i = 0; i < n; i++)
             {
                 double rowSum = sums[i];
-                double invSum = 1.0 / rowSum; // Compute reciprocal once
+                double invSum = 1.0 / rowSum;
                 int rowStart = i * m;
                 for (int j = 0; j < m; j++)
                 {

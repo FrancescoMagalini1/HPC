@@ -19,7 +19,7 @@ using json = nlohmann::json;
 int main(int argc, char *argv[])
 {
     int matrixSize = argc > 1 ? stoi(argv[1]) : 100;
-    int threads = argc > 2 ? stoi(argv[2]) : 4;
+    int threads = argc > 2 ? stoi(argv[2]) : 4; // number of threads for OpenMP
     int maxIterations = argc > 3 ? stoi(argv[3]) : 1;
     bool saveFile = argc > 4 ? stoi(argv[4]) : 0;
     omp_set_num_threads(threads);
@@ -32,6 +32,7 @@ int main(int argc, char *argv[])
     // Get the rank of the process
     int processRank;
     MPI_Comm_rank(MPI_COMM_WORLD, &processRank);
+    // The matrix must be divisible by the number of processes for an even distribution
     if (matrixSize % nProcesses != 0)
     {
         if (processRank == 0)
@@ -41,7 +42,7 @@ int main(int argc, char *argv[])
                  << nProcesses << endl;
         }
         MPI_Abort(MPI_COMM_WORLD, EXIT_FAILURE);
-        return EXIT_FAILURE; // (not strictly necessary after MPI_Abort)
+        return EXIT_FAILURE;
     }
     int rowsPerProcess = matrixSize / nProcesses;
     DVector flatBuffer; // only meaningful on root
@@ -63,12 +64,12 @@ int main(int argc, char *argv[])
             }
         }
     }
-
+    // Equally distribute the matrix rows to all processes. Each process receives a contiguous block of rows.
     MPI_Scatter(
-        flatBuffer.data(),           // send buffer (root only)
-        rowsPerProcess * matrixSize, // elements per process
+        flatBuffer.data(),
+        rowsPerProcess * matrixSize,
         MPI_DOUBLE,
-        localBuffer.data(), // receive buffer
+        localBuffer.data(),
         rowsPerProcess * matrixSize,
         MPI_DOUBLE,
         0,
@@ -83,12 +84,13 @@ int main(int argc, char *argv[])
         localBuffer = normalizeDistributed(localBuffer, localRowSums, rowsPerProcess, matrixSize, 1);
         DVector localColSums = sumAlongDistributed(localBuffer, rowsPerProcess, matrixSize, 0);
         DVector globalColSums(matrixSize, 0.0);
+        // Combine the local column sums from all processes to get the global column sums using an MPI reduction operation
         MPI_Allreduce(
-            localColSums.data(),  // send buffer
-            globalColSums.data(), // receive buffer
-            matrixSize,           // number of elements
+            localColSums.data(),
+            globalColSums.data(),
+            matrixSize,
             MPI_DOUBLE,
-            MPI_SUM, // reduction operation
+            MPI_SUM,
             MPI_COMM_WORLD);
 
         localD2 = vectorMultiply(localD2, globalColSums);
@@ -96,15 +98,15 @@ int main(int argc, char *argv[])
     }
     // Gather the normalized submatrices back to the root process
     MPI_Gather(
-        localBuffer.data(),          // send buffer
-        rowsPerProcess * matrixSize, // elements to send
+        localBuffer.data(),
+        rowsPerProcess * matrixSize,
         MPI_DOUBLE,
-        flatBuffer.data(),           // receive buffer (root only)
-        rowsPerProcess * matrixSize, // elements to receive per process
+        flatBuffer.data(),
+        rowsPerProcess * matrixSize,
         MPI_DOUBLE,
         0, // root process
         MPI_COMM_WORLD);
-    // Gather the localD1 and localD2 vectors back to the root process
+    // Gather the localD1 and localD2 vectors back to the root process and combine them to get the global D1 and D2 vectors.
     DVector globalD1;
     DVector globalD2;
 
@@ -113,23 +115,22 @@ int main(int argc, char *argv[])
         globalD1.resize(matrixSize);
         globalD2.resize(matrixSize);
     }
-
+    // Gather localD1 from all processes to globalD1 on root
     MPI_Gather(
-        localD1.data(), // send buffer
-        rowsPerProcess, // elements to send
+        localD1.data(),
+        rowsPerProcess,
         MPI_DOUBLE,
-        globalD1.data(), // receive buffer (root only)
-        rowsPerProcess,  // elements to receive per process
+        globalD1.data(),
+        rowsPerProcess,
         MPI_DOUBLE,
         0, // root process
         MPI_COMM_WORLD);
 
     // Since all processes have the same localD2, we can just copy it on root
-    // Or gather and verify consistency
     if (processRank == 0)
     {
-        globalD2 = localD2; // All processes have the same D2
-        // write to json globald1, globald2, initial matrix, final matrix
+        globalD2 = localD2;
+        // Save the results to a JSON file
         if (saveFile)
         {
             DMatrix finalMatrix(matrixSize, vector<double>(matrixSize));
