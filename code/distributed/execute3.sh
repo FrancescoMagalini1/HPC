@@ -1,10 +1,10 @@
 #!/bin/bash
 # change the number of cpus as needed, more threads should require more cpus
-#PBS -l select=4:ncpus=8:mem=8gb -l place=scatter
+#PBS -l select=8:ncpus=8:mem=8gb -l place=scatter
 # set max execution time
 #PBS -l walltime=00:03:00
 # imposta la coda di esecuzione
 #PBS -q shortCPUQ
 module load OpenMPI/4.1.6-GCC-13.2.0
 echo "ARG2: $ARG2"
-mpirun -n 4 ./HPC/code/distributed/executables/distributed "$ARG1" "$ARG2" "$ARG3"
+mpirun -n 8 ./HPC/code/distributed/executables/distributed "$ARG1" "$ARG2" "$ARG3"

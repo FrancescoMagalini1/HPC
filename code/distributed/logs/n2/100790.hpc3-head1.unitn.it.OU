@@ -1,0 +1,3 @@
+ARG2: 4
+Matrix size: 10000x10000, Number of processes: 2, Number of iterations: 3
+Execution time: 15.6013 seconds
