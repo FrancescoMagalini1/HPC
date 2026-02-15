@@ -1,1 +1,1 @@
-mpic++ -g -Wall -o ./executables/distributed distributed.cpp -fopenmp
+mpic++ -g -Wall -fopenmp -o  ./executables/distributed distributed.cpp
