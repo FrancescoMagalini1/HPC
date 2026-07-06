@@ -1,0 +1,9 @@
+qsub -o ~/HPC/code/serial/logs -e ~/HPC/code/serial/logs -v ARG1=2000 execute.sh
+qsub -o ~/HPC/code/serial/logs -e ~/HPC/code/serial/logs -v ARG1=2000 execute.sh
+qsub -o ~/HPC/code/serial/logs -e ~/HPC/code/serial/logs -v ARG1=2000 execute.sh
+qsub -o ~/HPC/code/serial/logs -e ~/HPC/code/serial/logs -v ARG1=4000 execute.sh
+qsub -o ~/HPC/code/serial/logs -e ~/HPC/code/serial/logs -v ARG1=4000 execute.sh
+qsub -o ~/HPC/code/serial/logs -e ~/HPC/code/serial/logs -v ARG1=4000 execute.sh
+qsub -o ~/HPC/code/serial/logs -e ~/HPC/code/serial/logs -v ARG1=8000 execute.sh
+qsub -o ~/HPC/code/serial/logs -e ~/HPC/code/serial/logs -v ARG1=8000 execute.sh
+qsub -o ~/HPC/code/serial/logs -e ~/HPC/code/serial/logs -v ARG1=8000 execute.sh
