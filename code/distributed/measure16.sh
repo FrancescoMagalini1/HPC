@@ -1,0 +1,9 @@
+qsub -o ~/HPC/code/distributed/logs/n16 -e ~/HPC/code/distributed/logs/n16 -v ARG1=16384,ARG2=4,ARG3=3 execute16.sh
+qsub -o ~/HPC/code/distributed/logs/n16 -e ~/HPC/code/distributed/logs/n16 -v ARG1=16384,ARG2=4,ARG3=3 execute16.sh
+qsub -o ~/HPC/code/distributed/logs/n16 -e ~/HPC/code/distributed/logs/n16 -v ARG1=16384,ARG2=4,ARG3=3 execute16.sh
+qsub -o ~/HPC/code/distributed/logs/n16 -e ~/HPC/code/distributed/logs/n16 -v ARG1=32768,ARG2=4,ARG3=3 execute16.sh
+qsub -o ~/HPC/code/distributed/logs/n16 -e ~/HPC/code/distributed/logs/n16 -v ARG1=32768,ARG2=4,ARG3=3 execute16.sh
+qsub -o ~/HPC/code/distributed/logs/n16 -e ~/HPC/code/distributed/logs/n16 -v ARG1=32768,ARG2=4,ARG3=3 execute16.sh
+qsub -o ~/HPC/code/distributed/logs/n16 -e ~/HPC/code/distributed/logs/n16 -v ARG1=65536,ARG2=4,ARG3=3 execute16.sh
+qsub -o ~/HPC/code/distributed/logs/n16 -e ~/HPC/code/distributed/logs/n16 -v ARG1=65536,ARG2=4,ARG3=3 execute16.sh
+qsub -o ~/HPC/code/distributed/logs/n16 -e ~/HPC/code/distributed/logs/n16 -v ARG1=65536,ARG2=4,ARG3=3 execute16.sh
