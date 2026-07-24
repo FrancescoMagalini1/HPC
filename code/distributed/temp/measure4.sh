@@ -1,0 +1,9 @@
+qsub -o ~/HPC/code/distributed/logs/n2 -e ~/HPC/code/distributed/logs/n2 -v ARG1=12000,ARG2=4,ARG3=3 execute.sh
+qsub -o ~/HPC/code/distributed/logs/n2 -e ~/HPC/code/distributed/logs/n2 -v ARG1=12000,ARG2=4,ARG3=3 execute.sh
+qsub -o ~/HPC/code/distributed/logs/n2 -e ~/HPC/code/distributed/logs/n2 -v ARG1=12000,ARG2=4,ARG3=3 execute.sh
+qsub -o ~/HPC/code/distributed/logs/n4 -e ~/HPC/code/distributed/logs/n4 -v ARG1=12000,ARG2=4,ARG3=3 execute2.sh
+qsub -o ~/HPC/code/distributed/logs/n4 -e ~/HPC/code/distributed/logs/n4 -v ARG1=12000,ARG2=4,ARG3=3 execute2.sh
+qsub -o ~/HPC/code/distributed/logs/n4 -e ~/HPC/code/distributed/logs/n4 -v ARG1=12000,ARG2=4,ARG3=3 execute2.sh
+qsub -o ~/HPC/code/distributed/logs/n8 -e ~/HPC/code/distributed/logs/n8 -v ARG1=12000,ARG2=4,ARG3=3 execute3.sh
+qsub -o ~/HPC/code/distributed/logs/n8 -e ~/HPC/code/distributed/logs/n8 -v ARG1=12000,ARG2=4,ARG3=3 execute3.sh
+qsub -o ~/HPC/code/distributed/logs/n8 -e ~/HPC/code/distributed/logs/n8 -v ARG1=12000,ARG2=4,ARG3=3 execute3.sh
