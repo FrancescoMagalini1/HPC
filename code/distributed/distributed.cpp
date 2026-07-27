@@ -18,7 +18,7 @@ using json = nlohmann::json;
 
 int main(int argc, char *argv[])
 {
-    int matrixSize = argc > 1 ? stoi(argv[1]) : 100;
+    unsigned long int matrixSize = argc > 1 ? stoi(argv[1]) : 100;
     int threads = argc > 2 ? stoi(argv[2]) : 4; // number of threads for OpenMP
     int maxIterations = argc > 3 ? stoi(argv[3]) : 1;
     bool saveFile = argc > 4 ? stoi(argv[4]) : 0;
@@ -44,7 +44,7 @@ int main(int argc, char *argv[])
         MPI_Abort(MPI_COMM_WORLD, EXIT_FAILURE);
         return EXIT_FAILURE;
     }
-    int rowsPerProcess = matrixSize / nProcesses;
+    unsigned long int rowsPerProcess = matrixSize / nProcesses;
     DVector flatBuffer; // only meaningful on root
     DVector localBuffer(rowsPerProcess * matrixSize);
     DMatrix initialMatrix; // only meaningful on root
@@ -56,9 +56,9 @@ int main(int argc, char *argv[])
         DMatrix matrix = toDouble(getRand(matrixSize, 1, 100));
         initialMatrix = matrix;
         flatBuffer.resize(matrixSize * matrixSize);
-        for (int i = 0; i < matrixSize; i++)
+        for (unsigned long int i = 0; i < matrixSize; i++)
         {
-            for (int j = 0; j < matrixSize; j++)
+            for (unsigned long int j = 0; j < matrixSize; j++)
             {
                 flatBuffer[i * matrixSize + j] = matrix[i][j];
             }
@@ -134,9 +134,9 @@ int main(int argc, char *argv[])
         if (saveFile)
         {
             DMatrix finalMatrix(matrixSize, vector<double>(matrixSize));
-            for (int i = 0; i < matrixSize; i++)
+            for (unsigned long int i = 0; i < matrixSize; i++)
             {
-                for (int j = 0; j < matrixSize; j++)
+                for (unsigned long int j = 0; j < matrixSize; j++)
                 {
                     finalMatrix[i][j] = flatBuffer[i * matrixSize + j];
                 }

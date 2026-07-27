@@ -20,17 +20,17 @@ namespace distributed_functions
         return result;
     }
 
-    DVector sumAlongDistributed(DVector flatBuffer, int n, int m, int axis)
+    DVector sumAlongDistributed(DVector flatBuffer, unsigned long int n, unsigned long int m, int axis)
     {
         DVector sums;
         if (axis == 0)
         { // Sum along columns
             sums.resize(m, 0.0);
 #pragma omp parallel for
-            for (int j = 0; j < m; j++)
+            for (unsigned long int j = 0; j < m; j++)
             {
                 double sum = 0.0;
-                for (int i = 0; i < n; i++)
+                for (unsigned long int i = 0; i < n; i++)
                 {
                     sum += flatBuffer[i * m + j];
                 }
@@ -42,12 +42,12 @@ namespace distributed_functions
         { // Sum along rows
             sums.resize(n, 0.0);
 #pragma omp parallel for
-            for (int i = 0; i < n; i++)
+            for (unsigned long int i = 0; i < n; i++)
             {
                 double sum = 0.0;
                 int rowStart = i * m;
 
-                for (int j = 0; j < m; j++)
+                for (unsigned long int j = 0; j < m; j++)
                 {
                     sum += flatBuffer[rowStart + j];
                 }
@@ -58,16 +58,16 @@ namespace distributed_functions
         return sums;
     }
 
-    DVector normalizeDistributed(DVector flatBuffer, DVector sums, int n, int m, int axis)
+    DVector normalizeDistributed(DVector flatBuffer, DVector sums, unsigned long int n, unsigned long int m, int axis)
     {
         DVector result(n * m, 0.0);
         if (axis == 0)
         { // Normalize along colums
 #pragma omp parallel for
-            for (int j = 0; j < m; j++)
+            for (unsigned long int j = 0; j < m; j++)
             {
                 double col_sum = sums[j];
-                for (int i = 0; i < n; i++)
+                for (unsigned long int i = 0; i < n; i++)
                 {
                     result[i * m + j] = flatBuffer[i * m + j] / col_sum;
                 }
@@ -76,12 +76,12 @@ namespace distributed_functions
         else if (axis == 1)
         { // Normalize along rows
 #pragma omp parallel for
-            for (int i = 0; i < n; i++)
+            for (unsigned long int i = 0; i < n; i++)
             {
                 double rowSum = sums[i];
                 double invSum = 1.0 / rowSum;
-                int rowStart = i * m;
-                for (int j = 0; j < m; j++)
+                unsigned long int rowStart = i * m;
+                for (unsigned long int j = 0; j < m; j++)
                 {
                     result[rowStart + j] = flatBuffer[rowStart + j] * invSum;
                 }
