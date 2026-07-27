@@ -27,7 +27,7 @@ namespace utils
     DMatrix toDouble(IntMatrix intMatrix)
     // Converts an integer matrix to a double matrix
     {
-        int n = intMatrix.size();
+        long unsigned int n = intMatrix.size();
         DMatrix doubleMatrix(n, vector<double>(n));
         for (unsigned long int i = 0; i < n; i++)
         {
