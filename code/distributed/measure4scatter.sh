@@ -1,0 +1,9 @@
+qsub -o ~/HPC/code/distributed/logs/scatter/n4 -e ~/HPC/code/distributed/logs/scatter/n4 -v ARG1=16000,ARG2=4,ARG3=3 execute4scatter.sh
+qsub -o ~/HPC/code/distributed/logs/scatter/n4 -e ~/HPC/code/distributed/logs/scatter/n4 -v ARG1=16000,ARG2=4,ARG3=3 execute4scatter.sh
+qsub -o ~/HPC/code/distributed/logs/scatter/n4 -e ~/HPC/code/distributed/logs/scatter/n4 -v ARG1=16000,ARG2=4,ARG3=3 execute4scatter.sh
+qsub -o ~/HPC/code/distributed/logs/scatter/n4 -e ~/HPC/code/distributed/logs/scatter/n4 -v ARG1=32000,ARG2=4,ARG3=3 execute4scatter.sh
+qsub -o ~/HPC/code/distributed/logs/scatter/n4 -e ~/HPC/code/distributed/logs/scatter/n4 -v ARG1=32000,ARG2=4,ARG3=3 execute4scatter.sh
+qsub -o ~/HPC/code/distributed/logs/scatter/n4 -e ~/HPC/code/distributed/logs/scatter/n4 -v ARG1=32000,ARG2=4,ARG3=3 execute4scatter.sh
+qsub -o ~/HPC/code/distributed/logs/scatter/n4 -e ~/HPC/code/distributed/logs/scatter/n4 -v ARG1=64000,ARG2=4,ARG3=3 execute4scatter.sh
+qsub -o ~/HPC/code/distributed/logs/scatter/n4 -e ~/HPC/code/distributed/logs/scatter/n4 -v ARG1=64000,ARG2=4,ARG3=3 execute4scatter.sh
+qsub -o ~/HPC/code/distributed/logs/scatter/n4 -e ~/HPC/code/distributed/logs/scatter/n4 -v ARG1=64000,ARG2=4,ARG3=3 execute4scatter.sh
