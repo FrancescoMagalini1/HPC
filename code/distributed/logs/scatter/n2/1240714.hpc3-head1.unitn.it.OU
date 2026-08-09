@@ -1,0 +1,4 @@
+ARG2: 4
+[1786117084.492571] [hpc3-c11-n23:1037815:0]        ib_iface.c:1011 UCX  ERROR iface=0xa16650: failed to create UD QP TX wr:256 sge:6 inl:64 resp:0 RX wr:4096 sge:1 resp:0: Operation not supported failed: Operation not supported
+Matrix size: 16000x16000, Number of processes: 2, Number of iterations: 3
+Execution time: 46.0862 seconds
