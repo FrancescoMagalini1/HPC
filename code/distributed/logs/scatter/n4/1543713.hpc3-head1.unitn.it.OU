@@ -1,0 +1,2 @@
+ARG2: 4
+[1787741446.142924] [hpc3-c11-n22:1773275:0]        ib_iface.c:1011 UCX  ERROR iface=0xcc4dc0: failed to create RC QP TX wr:256 sge:5 inl:64 resp:64 RX wr:0 sge:1 resp:64: Invalid argument failed: Invalid argument
