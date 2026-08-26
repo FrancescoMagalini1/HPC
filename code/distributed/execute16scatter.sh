@@ -1,6 +1,6 @@
 #!/bin/bash
 # change the number of cpus as needed, more threads should require more cpus
-#PBS -l select=2:ncpus=4:mem=160gb -l place=scatter
+#PBS -l select=16:ncpus=4:mem=160gb -l place=scatter
 # set max execution time
 #PBS -l walltime=03:00:00
 # imposta la coda di esecuzione
