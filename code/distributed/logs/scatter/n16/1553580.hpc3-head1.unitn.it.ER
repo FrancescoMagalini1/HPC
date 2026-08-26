@@ -1,0 +1,10 @@
+Loading OpenMPI/4.1.6-GCC-13.2.0
+  Loading requirement: GCCcore/13.2.0 zlib/1.2.13-GCCcore-13.2.0
+    binutils/2.40-GCCcore-13.2.0 GCC/13.2.0 numactl/2.0.16-GCCcore-13.2.0
+    XZ/5.4.4-GCCcore-13.2.0 libxml2/2.11.5-GCCcore-13.2.0
+    libpciaccess/0.17-GCCcore-13.2.0 hwloc/2.9.2-GCCcore-13.2.0 OpenSSL/1.1
+    libevent/2.1.12-GCCcore-13.2.0 UCX/1.15.0-GCCcore-13.2.0
+    libfabric/1.19.0-GCCcore-13.2.0 PMIx/4.2.6-GCCcore-13.2.0
+    UCC/1.2.0-GCCcore-13.2.0
+[hpc3-c11-n22.unitn.it:1896312] pml_ucx.c:309  Error: Failed to create UCP worker
+[hpc3-c11-n22.unitn.it:1896312] [[33014,1],10] selected pml cm, but peer [[33014,1],0] on hpc3-c04-n01 selected pml ob1
